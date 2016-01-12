@@ -65,6 +65,11 @@ RUN curl -fsSL http://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binar
 RUN  mkdir -p /opt/selenium \
   && wget --no-verbose http://selenium-release.storage.googleapis.com/${SELENIUM_VERSION}/selenium-server-standalone-${SELENIUM_VERSION}.jar -O /opt/selenium/selenium-server-standalone.jar
 
+#===========
+# Cucumber
+#===========
+RUN gem install cucumber
+
 #========================================
 # Add normal user with passwordless sudo
 #========================================
