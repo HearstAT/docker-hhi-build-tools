@@ -68,7 +68,11 @@ RUN  mkdir -p /opt/selenium \
 #===========
 # Cucumber
 #===========
-RUN gem install cucumber
+RUN gem install cucumber && \
+    gem install gherkin && \
+    gem install capybara && \
+    gem install rspec && \
+    gem install selenium-webdriver
 
 #========================================
 # Add normal user with passwordless sudo
