@@ -83,10 +83,10 @@ This image has been tested with Docker version:
 If you have any problems with or questions about this image, please submit a [GitHub issue](https://github.com/HearstAT/docker-hhi-build-tools/issues).
 
 # License
-The cloudbees/java-build-tools image is licensed under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0), and this repository is too:
+The [cloudbees/java-build-tools](https://github.com/cloudbees/java-build-tools-dockerfile) (which we borrowed a lot from) image is licensed under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0), and this repository is too:
 
 ```
-Copyright 2015 CloudBees, Inc
+Copyright 2015 HearstAT
 
 
 Licensed under the Apache License, Version 2.0 (the "License");
