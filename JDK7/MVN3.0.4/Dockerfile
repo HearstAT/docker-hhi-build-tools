@@ -12,9 +12,10 @@ MAINTAINER HearstAT <atat@hearst.com>
 # Set Environment Variables
 #================================================
 ENV JENKINS_HOME /var/lib/jenkins
-ENV JAVA_VERSION 6
+ENV JAVA_VERSION 7
 ENV JENKINS_REMOTE_VERSION 2.9
-ENV SELENIUM_VERSION 1.0.1
+ENV SELENIUM_VERSION 2.48
+ENV SELENUIM_SUB_VERSION 2
 ENV MAVEN_VERSION 3.0.4
 ENV MAVEN_HOME /usr/share/maven
 
@@ -36,20 +37,28 @@ RUN echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-sel
 RUN apt-get update -qqy &&\
     apt-get install -qqy --no-install-recommends software-properties-common && \
     add-apt-repository ppa:webupd8team/java && \
+    apt-add-repository ppa:brightbox/ruby-ng && \
     apt-get update && \
-    apt-get install -y --no-install-recommends oracle-java${JAVA_VERSION}-installer && \
+    apt-get install -y --no-install-recommends oracle-java${JAVA_VERSION}-installer \
     iproute \
     ca-certificates \
-    tar zip unzip \
-    wget curl \
+    tar \
+    zip \
+    unzip \
+    ruby2.3 \
+    ruby2.3-dev \
+    zlib1g-dev \
+    wget \
+    curl \
     git \
     build-essential \
-    less nano tree \
-    python python-pip groff && \
+    less \
+    nano \
+    tree \
+    python \
+    python-pip \
+    groff && \
     rm -rf /var/lib/apt/lists/*
-
-# workaround https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=775775
-RUN [ -f "/etc/ssl/certs/java/cacerts" ] || /var/lib/dpkg/info/ca-certificates-java.postinst configure
 
 #==========
 # Maven
@@ -63,7 +72,7 @@ RUN curl -fsSL http://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binar
 # Selenium
 #==========
 RUN  mkdir -p /opt/selenium \
-  && wget --no-verbose http://selenium-release.storage.googleapis.com/${SELENIUM_VERSION}/selenium-server-standalone-${SELENIUM_VERSION}.jar -O /opt/selenium/selenium-server-standalone.jar
+  && wget --no-verbose http://selenium-release.storage.googleapis.com/${SELENIUM_VERSION}/selenium-server-standalone-${SELENIUM_VERSION}.${SELENUIM_SUB_VERSION}.jar -O /opt/selenium/selenium-server-standalone.jar
 
 #===========
 # Cucumber

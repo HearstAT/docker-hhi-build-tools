@@ -37,6 +37,7 @@ RUN echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-sel
 RUN apt-get update -qqy &&\
     apt-get install -qqy --no-install-recommends software-properties-common && \
     add-apt-repository ppa:webupd8team/java && \
+    apt-add-repository ppa:brightbox/ruby-ng && \
     apt-get update && \
     apt-get install -y --no-install-recommends oracle-java${JAVA_VERSION}-installer \
     iproute \
@@ -44,7 +45,9 @@ RUN apt-get update -qqy &&\
     tar \
     zip \
     unzip \
-    ruby \
+    ruby2.3 \
+    ruby2.3-dev \
+    zlib1g-dev \
     wget \
     curl \
     git \
