@@ -31,20 +31,22 @@ RUN echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-sel
 #========================
 # Miscellaneous packages
 # iproute which is surprisingly not available in ubuntu:15.04 but is available in ubuntu:latest
-# groff is for aws-cli
 # tree is convenient for troubleshooting builds
 #========================
 RUN apt-get update -qqy &&\
     apt-get install -qqy --no-install-recommends software-properties-common && \
     add-apt-repository ppa:webupd8team/java && \
+    apt-add-repository ppa:brightbox/ruby-ng && \
     apt-get update && \
     apt-get install -y --no-install-recommends oracle-java${JAVA_VERSION}-installer \
     iproute \
-    ruby \
     ca-certificates \
     tar \
     zip \
     unzip \
+    ruby2.3 \
+    ruby2.3-dev \
+    zlib1g-dev \
     wget \
     curl \
     git \
@@ -61,7 +63,7 @@ RUN apt-get update -qqy &&\
 # Maven
 #==========
 
-RUN curl -fsSL http://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz | tar xzf - -C /usr/share \
+RUN curl -fsSL http://archive.apache.org/dist/maven/maven-2/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz | tar xzf - -C /usr/share \
   && mv /usr/share/apache-maven-$MAVEN_VERSION /usr/share/maven \
   && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
 
@@ -70,6 +72,15 @@ RUN curl -fsSL http://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binar
 #==========
 RUN  mkdir -p /opt/selenium \
   && wget --no-verbose http://selenium-release.storage.googleapis.com/${SELENIUM_VERSION}/selenium-server-standalone-${SELENIUM_VERSION}.${SELENUIM_SUB_VERSION}.jar -O /opt/selenium/selenium-server-standalone.jar
+
+#===========
+# Cucumber
+#===========
+RUN gem install cucumber && \
+    gem install gherkin && \
+    gem install capybara && \
+    gem install rspec && \
+    gem install selenium-webdriver
 
 #========================================
 # Add normal user with passwordless sudo
@@ -90,7 +101,7 @@ RUN apt-get update -qqy \
 #========================
 # Selenium Configuration
 #========================
-COPY ../../config.json /opt/selenium/config.json
+COPY config.json /opt/selenium/config.json
 
 ENV SCREEN_WIDTH 1360
 ENV SCREEN_HEIGHT 1020
@@ -100,8 +111,16 @@ ENV DISPLAY :99.0
 #====================================
 # Scripts to run Selenium Standalone
 #====================================
-COPY ../../entry_point.sh /opt/bin/entry_point.sh
+COPY entry_point.sh /opt/bin/entry_point.sh
 RUN chmod +x /opt/bin/entry_point.sh
+
+#====================================
+# MYSQL CLIENT
+#====================================
+RUN apt-get update -qqy \
+  && apt-get -qqy --no-install-recommends install \
+    mysql-client \
+  && rm -rf /var/lib/apt/lists/*
 
 #====================================
 # Setup JNLP Slave for Jenkins
@@ -111,7 +130,7 @@ RUN curl --create-dirs -sSLo /usr/share/jenkins/slave.jar http://repo.jenkins-ci
   && chmod 755 /usr/share/jenkins \
   && chmod 644 /usr/share/jenkins/slave.jar
 
-COPY ../../jenkins-slave /usr/local/bin/jenkins-slave
+COPY jenkins-slave /usr/local/bin/jenkins-slave
 
 RUN chmod a+rwx ${JENKINS_HOME}
 WORKDIR ${JENKINS_HOME}
